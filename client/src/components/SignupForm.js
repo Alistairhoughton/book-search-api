@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { ADD_USER } from "../utils/mutations";
 import { createUser } from "../utils/API";
+import { useMutation } from "@apollo/react-hooks";
 import Auth from "../utils/auth";
 
 const SignupForm = () => {
@@ -13,16 +14,28 @@ const SignupForm = () => {
   });
   // set state for form validation
 
-  const [signUp] = useMutation(ADD_USER);
+  const [addUser] = useMutation(ADD_USER, {
+    onCompleted: (data) => {
+      console.log();
+      const { signInKey } = data.addUser;
+      Auth.login(signInKey);
+    },
+    onError: (error) => {
+      console.error(error.message);
+      throw new Error("sign up failed");
+    },
+  });
 
   const [validated] = useState(false);
   // set state for alert
-  
+
   const [showAlert, setShowAlert] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log(userFormData);
     setUserFormData({ ...userFormData, [name]: value });
+    console.log(userFormData);
   };
 
   const handleFormSubmit = async (event) => {
@@ -36,11 +49,8 @@ const SignupForm = () => {
     }
 
     try {
-      const { data } = await signUp({
-        variables: { ...userFormData },
-      });
+      const { data } = await addUser({ variables: { ...userFormData } });
       console.log(data);
-      Auth.login(data.signUp.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);

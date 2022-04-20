@@ -11,7 +11,18 @@ const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
 
   //imported in use mutation. 
-  const [login] = useMutation(LOGIN_USER);
+  const [login] = useMutation(LOGIN_USER, {
+    onCompleted: (data) => {
+      const { signInKey} = data.login;
+      Auth.login(signInKey);
+    },
+    onError: (error) => {
+      console.error(error.message);
+      throw new Error("login failed");
+    },
+  });
+
+  
 
   const [validated] = useState(false);
   
@@ -33,11 +44,8 @@ const LoginForm = () => {
     }
 
     try {
-      const { data } = await login({
-        variables: { ...userFormData }
-      });
+      const { data } = await login({variables: { ...userFormData }});
       console.log(data);
-      Auth.login(data.login.token);
     } catch (err) {
       console.error(err);
       setShowAlert(true);
