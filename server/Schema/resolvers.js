@@ -6,8 +6,7 @@ const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
-        return await User.findById( context.user._id )
-        
+        return await User.findById(context.user._id);
       }
 
       throw new AuthenticationError("Please Log in");
@@ -22,7 +21,7 @@ const resolvers = {
         throw new AuthenticationError("incorrect email");
       }
 
-      const userPass = await user.isCorrectPassword( password );
+      const userPass = await user.isCorrectPassword(password);
 
       if (!userPass) {
         throw new AuthenticationError("incorrect password");
@@ -37,20 +36,26 @@ const resolvers = {
         const user = await User.create(args);
 
         const signInKey = signToken(user);
-        return { user, signInKey}
+        return { user, signInKey };
       } catch (error) {
-        console.error(error.message)
+        console.error(error.message);
       }
     },
 
-    saveBook: async (parent, { bookData }, context) => {
+    saveBook: async (parent, { book }, context) => {
+      const { _id } = context.user;
       if (context.user) {
-        const savedBook = await User.findByIdAndUpdate(
-          { _id: context.user._id },
-          { $push: { savedBooks: bookData } },
-          { new: true }
-        );
-        return savedBook;
+        try {
+          const myUpdatedBook = await User.findOneAndUpdate(
+            { _id },
+            { $push: { savedBooks: book } },
+            { new: true }
+          ).populate("savedBooks");
+
+          return myUpdatedBook;
+        } catch (error) {
+          console.error(error.message);
+        }
       }
     },
 
