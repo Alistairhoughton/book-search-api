@@ -26,11 +26,11 @@ No installation needed as the application is live. However if you do want to clo
 
 The application is very simple to use. Once you have signed up. Just search for a book and there will be options to save it to your account. 
 
+Deployed application can be found here - https://pacific-brushlands-34743.herokuapp.com/
+
 ## Screenshot
 
-In addition to the screenshot. Here is a link to the video walkthrough of how to use the application - https://www.youtube.com/watch?v=jlqegJoddGk
-
-![Screenshot](https://https://i.gyazo.com/f7a3898a92adc94692b69db576eb3cc2.png)
+![Screenshot](https://i.gyazo.com/f7a3898a92adc94692b69db576eb3cc2.png)
 
 ## License
 
